@@ -11,16 +11,16 @@ import (
 var Topic = "web_log" //主题名称
 var kafkaIp = "182.92.234.24:9092"
 
-func Test(ctx *gin.Context) {
+func Test(c *gin.Context) {
 	//读取
-	ctx.JSON(200, gin.H{
+	c.JSON(200, gin.H{
 		"data": "product",
 	})
 }
 
 func main() {
 
-	//启动消息者
+	//启动消费者
 	go InitConsumer()
 
 	r := gin.Default()
@@ -31,12 +31,12 @@ func main() {
 	})
 	r.GET("/send", SendMessage) //http://localhost:8082/send
 
-	r.Run("0.0.0.0:8082") // 监听并在 0.0.0.0:8080 上启动服务
+	r.Run("0.0.0.0:8082") // 监听并在 0.0.0.0:8082 上启动服务
 
 }
 
 // 发消息到kakfa
-func SendMessage(ctx *gin.Context) {
+func SendMessage(c *gin.Context) {
 	fmt.Println("SendMessage")
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll          // 发送完数据需要leader和follow都确认
@@ -76,7 +76,7 @@ func sendTokafka(client sarama.SyncProducer, msg *sarama.ProducerMessage, conten
 	fmt.Printf("pid:%v offset:%v\n", pid, offset)
 
 }
-
+// 初始化 消费者
 func InitConsumer() {
 	time.Sleep(time.Second * 3)
 	fmt.Println("init Counsumer success")
